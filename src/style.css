@@ -366,7 +366,173 @@ h2 span {
 
 /* AFTER PROJECTS */
 
-.skills,
+.skills {
+  min-height: 120vh;
+
+  padding:
+    150px
+    7vw;
+
+  background: #f4f2ed;
+
+  color: #171717;
+}
+
+.skills-header {
+  margin-bottom: 120px;
+}
+
+.skills-header h2 {
+  max-width: 850px;
+
+  font-size: clamp(
+    4rem,
+    8vw,
+    9rem
+  );
+
+  line-height: 0.88;
+
+  letter-spacing: -0.06em;
+
+  font-weight: 500;
+}
+
+.skills-header h2 span {
+  display: block;
+
+  font-family: Georgia, serif;
+
+  font-style: italic;
+
+  font-weight: 400;
+
+  color: #77736c;
+}
+
+
+/* SKILL ROWS */
+
+.skills-list {
+  width: 100%;
+}
+
+.skill-row {
+  position: relative;
+
+  min-height: 150px;
+
+  display: grid;
+
+  grid-template-columns:
+    80px
+    1fr
+    350px;
+
+  align-items: center;
+
+  gap: 30px;
+
+  border-top:
+    1px solid
+    rgba(0, 0, 0, 0.15);
+
+  transition:
+    padding 0.4s ease,
+    background 0.4s ease;
+}
+
+.skill-row:last-child {
+  border-bottom:
+    1px solid
+    rgba(0, 0, 0, 0.15);
+}
+
+.skill-number {
+  font-size: 10px;
+
+  letter-spacing: 0.25em;
+
+  opacity: 0.35;
+}
+
+.skill-row h3 {
+  font-size: clamp(
+    2rem,
+    4vw,
+    4.5rem
+  );
+
+  letter-spacing: -0.04em;
+
+  font-weight: 400;
+}
+
+.skill-row p {
+  margin: 0;
+
+  color: #77736c;
+
+  font-size: 12px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.12em;
+
+  line-height: 1.6;
+}
+
+
+/* HOVER */
+
+.skill-row:hover {
+  padding-left: 25px;
+  padding-right: 25px;
+
+  background:
+    rgba(255, 255, 255, 0.45);
+}
+
+.skill-row h3 {
+  transition:
+    transform 0.4s ease;
+}
+
+.skill-row:hover h3 {
+  transform:
+    translateX(15px);
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+  .skills {
+    padding:
+      110px
+      25px;
+  }
+
+  .skills-header {
+    margin-bottom: 70px;
+  }
+
+  .skill-row {
+    grid-template-columns:
+      40px
+      1fr;
+
+    min-height: 130px;
+  }
+
+  .skill-row p {
+    grid-column: 2;
+
+    margin-bottom: 25px;
+  }
+
+}
 .contact {
   display: flex;
 
@@ -438,4 +604,179 @@ h2 span {
     height: 40vh;
   }
 
+}
+.projects {
+  position: relative;
+
+  height: 100vh;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #171717;
+  color: #f4f2ed;
+
+  z-index: 5;
+}
+
+.projects-top {
+  position: absolute;
+
+  top: 45px;
+  left: 7vw;
+  right: 7vw;
+
+  display: flex;
+  justify-content: space-between;
+
+  z-index: 10;
+
+  font-size: 9px;
+  letter-spacing: 0.3em;
+
+  opacity: 0.5;
+}
+
+.project-slide {
+  position: absolute;
+
+  inset: 0;
+
+  padding:
+    130px
+    7vw
+    80px;
+
+  display: grid;
+
+  grid-template-columns:
+    0.8fr
+    1.2fr;
+
+  gap: 7vw;
+
+  align-items: center;
+}
+
+.project-info {
+  max-width: 480px;
+}
+
+.project-type {
+  font-size: 9px;
+
+  letter-spacing: 0.3em;
+
+  opacity: 0.4;
+}
+
+.project-info h3 {
+  margin-top: 20px;
+
+  font-family: Georgia, serif;
+
+  font-size: clamp(
+    4rem,
+    6vw,
+    7rem
+  );
+
+  font-style: italic;
+
+  font-weight: 400;
+
+  letter-spacing: -0.05em;
+}
+
+.project-description {
+  margin-top: 30px;
+
+  color: #aaa69f;
+
+  line-height: 1.7;
+
+  max-width: 420px;
+}
+
+.project-tech {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin-top: 25px;
+}
+
+.project-tech span {
+  padding: 8px 13px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
+
+  border-radius: 100px;
+
+  font-size: 9px;
+
+  letter-spacing: 0.15em;
+}
+
+.project-info a {
+  display: inline-block;
+
+  margin-top: 35px;
+
+  font-size: 12px;
+
+  padding-bottom: 5px;
+
+  border-bottom:
+    1px solid
+    rgba(255, 255, 255, 0.3);
+}
+
+.project-visual {
+  height: 65vh;
+
+  overflow: hidden;
+
+  border-radius: 30px;
+
+  background: #292929;
+}
+
+.project-visual img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+.project-progress {
+  position: absolute;
+
+  left: 7vw;
+  right: 7vw;
+  bottom: 35px;
+
+  height: 1px;
+
+  background:
+    rgba(255, 255, 255, 0.15);
+
+  z-index: 10;
+}
+
+.project-progress-bar {
+  width: 100%;
+  height: 100%;
+
+  background: #f4f2ed;
+
+  transform: scaleX(0);
+  transform-origin: left;
 }
