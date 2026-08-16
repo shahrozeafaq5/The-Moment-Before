@@ -242,6 +242,9 @@ h3 {
   width: 100%;
   min-height: 100vh;
 
+  position: relative;
+  z-index: 1;
+
   padding:
     130px var(--padding)
     40px var(--padding);
@@ -255,6 +258,8 @@ h3 {
 
 .hero-eyebrow {
   margin-left: 5px;
+
+  flex-shrink: 0;
 
   font-size: 10px;
 
@@ -274,7 +279,11 @@ h3 {
   margin-bottom: auto;
 
   font-size:
-    clamp(90px, 16vw, 260px);
+    clamp(
+      72px,
+      min(16vw, 22vh),
+      260px
+    );
 
   line-height: 0.72;
 
@@ -301,6 +310,11 @@ h3 {
 .hero-bottom {
   display: flex;
 
+  position: relative;
+  z-index: 2;
+
+  flex-shrink: 0;
+
   justify-content: space-between;
 
   align-items: flex-end;
@@ -319,6 +333,14 @@ h3 {
     clamp(20px, 2vw, 30px);
 
   line-height: 1.1;
+}
+
+.hero-description--white {
+  color: rgba(5, 5, 5, 0.82);
+}
+
+.hero-description--dark {
+  color: rgba(255, 255, 255, 0.84);
 }
 .scroll-indicator {
   display: flex;
@@ -734,7 +756,14 @@ h3 {
 .darkroom {
   position: relative;
 
-  background: var(--black);
+  background:
+    radial-gradient(
+      circle 22rem at 82% 12%,
+      rgba(210, 31, 19, 0.15) 0%,
+      rgba(128, 11, 7, 0.07) 42%,
+      transparent 72%
+    );
+  background-color: var(--black);
 
   min-height: 420vh;
 
@@ -782,6 +811,10 @@ h3 {
   height: 100vh;
 
   overflow: hidden;
+
+  box-shadow:
+    0 0 90px 12px
+    rgba(168, 18, 11, 0.12);
 }
 
 .developed-image {
@@ -1003,6 +1036,13 @@ h3 {
 .memory-panel:last-of-type .memory-overlay {
   background:
     linear-gradient(
+      to bottom,
+      transparent 52%,
+      rgba(0,0,0,.3) 72%,
+      rgba(0,0,0,.88) 94%,
+      var(--black) 100%
+    ),
+    linear-gradient(
       to left,
       rgba(0,0,0,.78),
       rgba(0,0,0,.08)
@@ -1042,7 +1082,14 @@ h3 {
   padding:
     160px var(--padding);
 
-  background: var(--white);
+  background:
+    linear-gradient(
+      to bottom,
+      var(--black) 0,
+      #242423 24px,
+      #878785 58px,
+      var(--white) 108px
+    );
 
   color: var(--black);
 
@@ -1314,7 +1361,11 @@ h3 {
 
   .hero-title {
     font-size:
-      clamp(68px, 18vw, 145px);
+      clamp(
+        64px,
+        min(18vw, 17vh),
+        145px
+      );
 
     line-height: 0.78;
   }

@@ -1,7 +1,9 @@
 import "./style.css";
+import "lenis/dist/lenis.css";
 
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import Lenis from "lenis";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -22,6 +24,34 @@ const isSmallViewport =
   window.matchMedia(
     "(max-width: 768px)"
   ).matches;
+
+const lenis = prefersReducedMotion
+  ? null
+  : new Lenis({
+      smoothWheel: true,
+      lerp: 0.09,
+      wheelMultiplier: 0.9,
+      touchMultiplier: 1.1,
+      syncTouch: false,
+      anchors: true,
+      autoRaf: false,
+      autoResize: true,
+      overscroll: true,
+      respectReducedMotion: true
+    });
+
+if (lenis) {
+  lenis.on(
+    "scroll",
+    ScrollTrigger.update
+  );
+
+  gsap.ticker.add(time => {
+    lenis.raf(time * 1000);
+  });
+
+  gsap.ticker.lagSmoothing(0);
+}
 
 class FrameSequence {
   constructor({
@@ -373,7 +403,79 @@ const loader =
 
 let cameraModel = null;
 let cameraRig = null;
+let cameraVignette = null;
 let cameraMotionProgress = 0;
+
+function createCameraVignette() {
+  const vignetteCanvas =
+    document.createElement("canvas");
+
+  vignetteCanvas.width = 512;
+  vignetteCanvas.height = 512;
+
+  const context =
+    vignetteCanvas.getContext("2d");
+
+  const gradient =
+    context.createRadialGradient(
+      256,
+      256,
+      0,
+      256,
+      256,
+      256
+    );
+
+  gradient.addColorStop(
+    0,
+    "rgba(255, 255, 250, 0.72)"
+  );
+  gradient.addColorStop(
+    0.32,
+    "rgba(246, 245, 238, 0.38)"
+  );
+  gradient.addColorStop(
+    0.68,
+    "rgba(238, 238, 232, 0.1)"
+  );
+  gradient.addColorStop(
+    1,
+    "rgba(238, 238, 232, 0)"
+  );
+
+  context.fillStyle = gradient;
+  context.fillRect(
+    0,
+    0,
+    vignetteCanvas.width,
+    vignetteCanvas.height
+  );
+
+  const texture =
+    new THREE.CanvasTexture(
+      vignetteCanvas
+    );
+
+  const material =
+    new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthWrite: false,
+      opacity: 0.68
+    });
+
+  const vignette =
+    new THREE.Sprite(material);
+
+  vignette.position.z = -1.35;
+  vignette.scale.set(
+    5.1,
+    4.15,
+    1
+  );
+
+  return vignette;
+}
 
 function normalizeModel(
   model,
@@ -469,6 +571,22 @@ function updateCameraRig(progress) {
   cameraRig.scale.setScalar(
     0.72 + entrance * 0.28
   );
+
+  if (cameraVignette) {
+    cameraVignette.position.x =
+      cameraRig.position.x;
+    cameraVignette.position.y =
+      cameraRig.position.y;
+
+    const vignetteScale =
+      0.82 + entrance * 0.18;
+
+    cameraVignette.scale.set(
+      5.1 * vignetteScale,
+      4.15 * vignetteScale,
+      1
+    );
+  }
 }
 
 loader.load(
@@ -485,6 +603,10 @@ loader.load(
     cameraRig = new THREE.Group();
     cameraRig.add(cameraModel);
     scene.add(cameraRig);
+
+    cameraVignette =
+      createCameraVignette();
+    scene.add(cameraVignette);
 
     cameraRig.rotation.set(
       0.05,
@@ -511,18 +633,16 @@ loader.load(
   }
 );
 
-function animate() {
-  requestAnimationFrame(
-    animate
-  );
+let renderThreeScene = false;
+
+gsap.ticker.add(() => {
+  if (!renderThreeScene) return;
 
   renderer.render(
     scene,
     camera
   );
-}
-
-animate();
+});
 
 window.addEventListener(
   "resize",
@@ -573,7 +693,10 @@ gsap.timeline({
   scrollTrigger: {
     trigger: ".hero",
     start: "top top",
-    end: "+=2500",
+    end:
+      isSmallViewport
+        ? "+=900"
+        : "+=1400",
     scrub: 1,
     pin: true,
     pinSpacing: true
@@ -951,7 +1074,12 @@ ScrollTrigger.create({
   trigger: "#camera",
 
   start: "top bottom",
-  end: "65% bottom",
+  endTrigger: "#capture",
+  end: "top 55%",
+
+  onToggle(self) {
+    renderThreeScene = self.isActive;
+  },
 
   onUpdate(self) {
     cameraMotionProgress = self.progress;
