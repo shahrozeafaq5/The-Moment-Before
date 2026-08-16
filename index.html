@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
 
@@ -8,348 +9,841 @@
     content="width=device-width, initial-scale=1.0"
   />
 
-  <title>3D Portfolio</title>
+  <meta
+    name="description"
+    content="The Moment Before — an interactive photographic experience."
+  />
+
+  <title>The Moment Before</title>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Instrument+Sans:wdth,wght@75..100,400..700&display=swap"
+    rel="stylesheet"
+  >
 </head>
 
 <body>
 
-  <canvas id="bg"></canvas>
-
-  <nav class="navbar">
-    <a href="#" class="logo">SA.</a>
-
-    <div class="nav-links">
-      <a href="#about">About</a>
-      <a href="#work">Work</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </nav>
-
-
-  <!-- HERO -->
-
-  <section class="hero">
-
-    <div class="hero-content">
-
-      <p class="eyebrow">
-        DEVELOPER / CYBERSECURITY / 2026
-      </p>
-
-      <h1>
-        I build digital
-        <span>experiences.</span>
-      </h1>
-
-      <p class="description">
-        Full-stack development, cybersecurity
-        and intelligent systems built with
-        performance, security and design in mind.
-      </p>
-
-    </div>
-
-    <p class="section-index">
-      01 / INTRO
-    </p>
-
-  </section>
-
-
-  <!-- ABOUT -->
-
-  <section
-    id="about"
-    class="about model-section"
-  >
-
-    <div class="section-content right-content">
-
-      <p class="eyebrow">
-        02 / ABOUT
-      </p>
-
-      <h2>
-        Developer by craft.
-        <span>Security minded.</span>
-      </h2>
-
-      <p class="section-description">
-        I build products across frontend,
-        backend, AI and cybersecurity while
-        focusing on strong visual experiences.
-      </p>
-
-    </div>
-
-  </section>
-
-
-  <!-- FINAL MODEL SECTION -->
-
-  <section class="profile model-section">
-
-    <div class="section-content">
-
-      <p class="eyebrow">
-        03 / WHAT I DO
-      </p>
-
-      <h2>
-        Code.
-        <span>Secure.</span>
-        Create.
-      </h2>
-
-      <p class="section-description">
-        From interactive interfaces and full-stack
-        systems to security engineering and
-        intelligent applications.
-      </p>
-
-    </div>
-
-  </section>
-
-
-  <!-- PROJECTS -->
-
-  <section id="work" class="projects">
-
-  <div class="projects-top">
-    <p>04 / SELECTED WORK</p>
-
-    <p>
-      <span class="current-project">01</span>
-      / 03
-    </p>
-  </div>
-
-
-  <article class="project-slide project-1">
-
-    <div class="project-info">
-
-      <p class="project-type">
-        FULL-STACK / WEB
-      </p>
-
-      <h3>Project One</h3>
-
-      <p class="project-description">
-        A modern digital product focused on
-        performance, usability and clean interaction.
-      </p>
-
-      <div class="project-tech">
-        <span>React</span>
-        <span>Next.js</span>
-        <span>MongoDB</span>
-      </div>
-
-      <a href="#">
-        View project ↗
-      </a>
-
-    </div>
-
-    <div class="project-visual">
-      <img
-        src="/images/project1.jpg"
-        alt="Project One"
-      />
-    </div>
-
-  </article>
-
-
-  <article class="project-slide project-2">
-
-    <div class="project-info">
-
-      <p class="project-type">
-        SECURITY / PLATFORM
-      </p>
-
-      <h3>Project Two</h3>
-
-      <p class="project-description">
-        A security-focused application designed
-        around structured workflows and visibility.
-      </p>
-
-      <div class="project-tech">
-        <span>React</span>
-        <span>Node.js</span>
-        <span>Security</span>
-      </div>
-
-      <a href="#">
-        View project ↗
-      </a>
-
-    </div>
-
-    <div class="project-visual">
-      <img
-        src="/images/project2.jpg"
-        alt="Project Two"
-      />
-    </div>
-
-  </article>
-
-
-  <article class="project-slide project-3">
-
-    <div class="project-info">
-
-      <p class="project-type">
-        AI / AUTOMATION
-      </p>
-
-      <h3>Project Three</h3>
-
-      <p class="project-description">
-        An intelligent system combining software
-        engineering with AI-driven workflows.
-      </p>
-
-      <div class="project-tech">
-        <span>Python</span>
-        <span>AI</span>
-        <span>FastAPI</span>
-      </div>
-
-      <a href="#">
-        View project ↗
-      </a>
-
-    </div>
-
-    <div class="project-visual">
-      <img
-        src="/images/project3.jpg"
-        alt="Project Three"
-      />
-    </div>
-
-  </article>
-
-
-  <div class="project-progress">
-    <div class="project-progress-bar"></div>
-  </div>
-
-</section>
-
-  <!-- AFTER PIN -->
-
-<section class="skills" id="skills">
-
-  <div class="skills-header">
-
-    <p class="eyebrow">
-      05 / CAPABILITIES
-    </p>
-
-    <h2>
-      What I
-      <span>work with.</span>
-    </h2>
+  <!-- ========================================
+       FIXED CINEMATIC LAYERS
+       ======================================== -->
+
+  <div class="cinematic-stage">
+
+    <!-- Observation frame sequence -->
+    <canvas
+      id="observationCanvas"
+      class="fixed-layer sequence-canvas"
+    ></canvas>
+
+    <!-- Capture frame sequence -->
+    <canvas
+      id="captureCanvas"
+      class="fixed-layer sequence-canvas"
+    ></canvas>
+
+    <!-- Three.js -->
+    <canvas
+      id="threeCanvas"
+      class="fixed-layer"
+    ></canvas>
 
   </div>
 
 
-  <div class="skills-list">
+  <!-- ========================================
+       SITE HEADER
+       ======================================== -->
 
-    <div class="skill-row left-skill">
+  <header class="site-header">
 
-      <span class="skill-number">
+    <a href="#hero" class="brand">
+      TMB®
+    </a>
+
+    <div class="header-center">
+      A STUDY OF LIGHT / TIME / MEMORY
+    </div>
+
+    <div class="header-index">
+      <span id="chapterNumber">00</span>
+      /
+      07
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <!-- ========================================
+         00 — HERO
+         ======================================== -->
+
+    <section
+      id="hero"
+      class="chapter hero"
+      data-chapter="00"
+    >
+
+      <div class="chapter-number">
+        00
+      </div>
+
+      <div class="hero-variant hero-variant--white">
+
+        <div class="hero-content hero-content--white">
+
+          <p class="hero-eyebrow hero-eyebrow--white reveal-text">
+            AN INTERACTIVE PHOTOGRAPHIC EXPERIENCE
+          </p>
+
+          <h1 class="hero-title hero-title--white">
+
+            <span class="title-mask">
+              <span>THE</span>
+            </span>
+
+            <span class="title-mask">
+              <span>MOMENT</span>
+            </span>
+
+            <span class="title-mask title-right">
+              <span>BEFORE</span>
+            </span>
+
+          </h1>
+
+          <div class="hero-bottom hero-bottom--white">
+
+            <p class="hero-description hero-description--white">
+              A photograph lasts forever.
+              The moment before it existed
+              for only a fraction of a second.
+            </p>
+
+            <div class="scroll-indicator scroll-indicator--white">
+              <span>SCROLL TO ENTER</span>
+              <span class="scroll-line scroll-line--white"></span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="hero-variant hero-variant--dark">
+
+        <div class="hero-content hero-content--dark">
+
+          <p class="hero-eyebrow hero-eyebrow--dark reveal-text">
+            AN INTERACTIVE PHOTOGRAPHIC EXPERIENCE
+          </p>
+
+          <h1 class="hero-title hero-title--dark">
+
+            <span class="title-mask">
+              <span>THE</span>
+            </span>
+
+            <span class="title-mask">
+              <span>MOMENT</span>
+            </span>
+
+            <span class="title-mask title-right">
+              <span>BEFORE</span>
+            </span>
+
+          </h1>
+
+          <div class="hero-bottom hero-bottom--dark">
+
+            <p class="hero-description hero-description--dark">
+              A photograph lasts forever.
+              The moment before it existed
+              for only a fraction of a second.
+            </p>
+
+            <div class="scroll-indicator scroll-indicator--dark">
+              <span>SCROLL TO ENTER</span>
+              <span class="scroll-line scroll-line--dark"></span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================
+         01 — BEFORE THE FRAME
+         FRAME-SEQUENCE SECTION
+         ======================================== -->
+
+    <section
+      id="before-frame"
+      class="chapter before-frame cinematic-section"
+      data-chapter="01"
+    >
+
+      <div class="chapter-number light-number">
         01
-      </span>
+      </div>
 
-      <h3>
-        Full-Stack Development
-      </h3>
+      <div class="cinematic-copy">
 
-      <p>
-        React / Next.js / Node / FastAPI
-      </p>
+        <p class="micro-label">
+          BEFORE THE FRAME
+        </p>
 
-    </div>
+        <h2 class="cinematic-heading">
+          Before the photograph,
+          <br>
+          there is only
+          <em>observation.</em>
+        </h2>
+
+      </div>
 
 
-    <div class="skill-row right-skill">
+      <div class="floating-word word-light">
+        LIGHT
+      </div>
 
-      <span class="skill-number">
+      <div class="floating-word word-space">
+        SPACE
+      </div>
+
+      <div class="floating-word word-movement">
+        MOVEMENT
+      </div>
+
+      <div class="floating-word word-waiting">
+        WAITING
+      </div>
+
+    </section>
+
+
+    <!-- ========================================
+         02 — OBSERVE
+         ======================================== -->
+
+    <section
+      id="observe"
+      class="chapter observe"
+      data-chapter="02"
+    >
+
+      <div class="chapter-number">
         02
-      </span>
+      </div>
 
-      <h3>
-        Cybersecurity
-      </h3>
+      <div class="observe-grid">
 
-      <p>
-        Web / Network / Pentesting
-      </p>
+        <div class="observe-copy">
 
-    </div>
+          <p class="micro-label dark-label">
+            THE ACT OF SEEING
+          </p>
+
+          <h2 class="display-heading">
+            OBSERVE.
+          </h2>
+
+          <p class="editorial-copy">
+            Most people look.
+            A photographer waits until
+            looking becomes seeing.
+          </p>
+
+        </div>
 
 
-    <div class="skill-row left-skill">
+        <div class="observe-image-wrap">
 
-      <span class="skill-number">
+          <img
+            class="observe-image"
+            src="/assets/images/observe.jpg"
+            alt="Black and white photography"
+            decoding="async"
+          >
+
+          <div class="image-meta">
+
+            <span>FRAME 002</span>
+
+            <span>
+              LIGHT / FORM
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================
+         03 — CAMERA / THREE.JS
+         ======================================== -->
+
+    <section
+      id="camera"
+      class="chapter camera-section cinematic-section"
+      data-chapter="03"
+    >
+
+      <div class="chapter-number light-number">
         03
-      </span>
-
-      <h3>
-        AI & Automation
-      </h3>
-
-      <p>
-        LLMs / Agents / AI Systems
-      </p>
-
-    </div>
+      </div>
 
 
-    <div class="skill-row right-skill">
+      <div class="camera-intro-copy">
 
-      <span class="skill-number">
+        <p class="micro-label">
+          LIGHT BECOMES MEMORY
+        </p>
+
+        <p>
+          Before an image can be kept,
+          light must travel through glass,
+          mechanics, and a moment of darkness.
+        </p>
+
+      </div>
+
+
+      <div class="camera-copy camera-copy-left">
+
+        <p class="micro-label">
+          THE INSTRUMENT
+        </p>
+
+        <h2>
+          THE MACHINE
+          <br>
+          BETWEEN
+          <br>
+          THE EYE
+          <br>
+          AND MEMORY.
+        </h2>
+
+      </div>
+
+
+      <div class="camera-copy camera-copy-right">
+
+        <p>
+          Aperture.
+          <br>
+          Shutter.
+          <br>
+          Focus.
+        </p>
+
+        <span>
+          CONTROL THE LIGHT.
+        </span>
+
+      </div>
+
+
+      <div class="camera-enter-copy">
+
+        <p>
+          Every photograph begins
+          <br>
+          inside the dark.
+        </p>
+
+        <span>
+          ENTER THE LENS ↓
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================
+         04 — CAPTURE
+         ======================================== -->
+
+    <section
+      id="capture"
+      class="chapter capture cinematic-section"
+      data-chapter="04"
+    >
+
+      <div class="chapter-number light-number">
         04
-      </span>
-
-      <h3>
-        3D & Interactive
-      </h3>
-
-      <p>
-        Three.js / Unity / Blender
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
+      </div>
 
 
-  <section
-    id="contact"
-    class="contact"
-  >
+      <div class="capture-time">
+        1 / 125
+      </div>
 
-    <p class="eyebrow">
-      06 / CONTACT
-    </p>
 
-    <h2>
-      Let's build
-      <span>something.</span>
-    </h2>
+      <div class="capture-subtitle">
+        OF A SECOND
+      </div>
 
-  </section>
+
+      <div class="capture-process-copy">
+
+        <p class="micro-label">
+          THE DECISIVE MOMENT
+        </p>
+
+        <p>
+          Light enters. The shutter opens.
+          What disappears in an instant
+          becomes something we can keep.
+        </p>
+
+      </div>
+
+
+      <div class="capture-result">
+
+        <p class="micro-label">
+          FRAME CAPTURED
+        </p>
+
+        <h2>
+          AND THEN,
+          <br>
+          TIME STOPS.
+        </h2>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================
+         05 — DARKROOM
+         ======================================== -->
+
+    <section
+      id="darkroom"
+      class="chapter darkroom"
+      data-chapter="05"
+    >
+
+      <div class="chapter-number light-number">
+        05
+      </div>
+
+
+      <div class="darkroom-top">
+
+        <div>
+
+          <p class="micro-label">
+            THE DARKROOM
+          </p>
+
+          <h2 class="display-heading">
+            LIGHT
+            <br>
+            MEETS
+            <br>
+            LIGHT.
+          </h2>
+
+        </div>
+
+
+        <p class="editorial-copy darkroom-copy">
+          The image existed before
+          we could see it.
+          Development simply allows
+          the memory to surface.
+        </p>
+
+      </div>
+
+
+      <div class="development-stage">
+
+        <div class="developed-image-wrap">
+
+          <img
+            src="/assets/images/developed.jpg"
+            alt="Developed photograph"
+            class="developed-image"
+            loading="lazy"
+            decoding="async"
+          >
+
+        </div>
+
+
+        <div class="development-steps">
+
+          <span>01 / EXPOSE</span>
+          <span>02 / DEVELOP</span>
+          <span>03 / STOP</span>
+          <span>04 / FIX</span>
+          <span>05 / WASH</span>
+
+        </div>
+
+      </div>
+
+
+      <!-- Contact sheet -->
+
+      <div class="contact-sheet-section">
+
+        <div class="contact-heading">
+
+          <p class="micro-label">
+            CONTACT SHEET / 001
+          </p>
+
+          <h3>
+            TWENTY FOUR
+            <br>
+            ATTEMPTS.
+            <br>
+            ONE MOMENT.
+          </h3>
+
+        </div>
+
+
+        <div class="contact-grid">
+
+          <div class="contact-frame">
+            <img src="/assets/images/contact-01.jpg" alt="Contact sheet frame 01" loading="lazy" decoding="async">
+            <span>01</span>
+          </div>
+
+          <div class="contact-frame">
+            <img src="/assets/images/contact-02.jpg" alt="Contact sheet frame 02" loading="lazy" decoding="async">
+            <span>02</span>
+          </div>
+
+          <div class="contact-frame">
+            <img src="/assets/images/contact-03.jpg" alt="Contact sheet frame 03" loading="lazy" decoding="async">
+            <span>03</span>
+          </div>
+
+          <div class="contact-frame">
+            <img src="/assets/images/contact-04.jpg" alt="Contact sheet frame 04" loading="lazy" decoding="async">
+            <span>04</span>
+          </div>
+
+          <div class="contact-frame">
+            <img src="/assets/images/contact-05.jpg" alt="Contact sheet frame 05" loading="lazy" decoding="async">
+            <span>05</span>
+          </div>
+
+          <div class="contact-frame">
+            <img src="/assets/images/contact-06.jpg" alt="Contact sheet frame 06" loading="lazy" decoding="async">
+            <span>06</span>
+          </div>
+
+          <div class="contact-frame">
+            <img src="/assets/images/contact-07.jpg" alt="Contact sheet frame 07" loading="lazy" decoding="async">
+            <span>07</span>
+          </div>
+
+          <div class="contact-frame">
+            <img src="/assets/images/contact-08.jpg" alt="Contact sheet frame 08" loading="lazy" decoding="async">
+            <span>08</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================
+         06 — MEMORY
+         ======================================== -->
+
+    <section
+      id="memory"
+      class="chapter memory"
+      data-chapter="06"
+    >
+
+      <div class="chapter-number light-number memory-number">
+        06
+      </div>
+
+
+      <article class="memory-panel">
+
+        <img
+          src="/assets/images/memory-01.jpg"
+          class="memory-image"
+          alt="A remembered place"
+          loading="lazy"
+          decoding="async"
+        >
+
+        <div class="memory-overlay"></div>
+
+        <div class="memory-text">
+          <span>01</span>
+
+          <h2>
+            WE PHOTOGRAPH
+            <br>
+            WHAT WE'RE
+            <br>
+            AFRAID TO FORGET.
+          </h2>
+        </div>
+
+      </article>
+
+
+      <article class="memory-panel">
+
+        <img
+          src="/assets/images/memory-02.jpg"
+          class="memory-image"
+          alt="A place disappearing into memory"
+          loading="lazy"
+          decoding="async"
+        >
+
+        <div class="memory-overlay"></div>
+
+        <div class="memory-text">
+          <span>02</span>
+
+          <h2>
+            PLACES
+            <br>
+            DISAPPEAR.
+          </h2>
+        </div>
+
+      </article>
+
+
+      <article class="memory-panel">
+
+        <img
+          src="/assets/images/memory-03.jpg"
+          class="memory-image"
+          alt="A photograph preserving a moment"
+          loading="lazy"
+          decoding="async"
+        >
+
+        <div class="memory-overlay"></div>
+
+        <div class="memory-text final-memory-text">
+
+          <span>03</span>
+
+          <h2>
+            THE FRAME
+            <br>
+            REMAINS.
+          </h2>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ========================================
+         07 — ARCHIVE
+         ======================================== -->
+
+    <section
+      id="archive"
+      class="chapter archive"
+      data-chapter="07"
+    >
+
+      <div class="chapter-number">
+        07
+      </div>
+
+
+      <div class="archive-header">
+
+        <div>
+
+          <p class="micro-label dark-label">
+            SELECTED FRAMES
+          </p>
+
+          <h2 class="display-heading">
+            ARCHIVE
+          </h2>
+
+        </div>
+
+
+        <p>
+          2026
+          <br>
+          COLLECTION / 001
+        </p>
+
+      </div>
+
+
+      <div class="archive-list">
+
+        <div
+          class="archive-item"
+          data-image="/assets/images/street.jpg"
+        >
+
+          <span>001</span>
+
+          <h3>STREET</h3>
+
+          <span>
+            HUMAN / CITY
+          </span>
+
+          <span>↗</span>
+
+        </div>
+
+
+        <div
+          class="archive-item"
+          data-image="/assets/images/light.jpg"
+        >
+
+          <span>002</span>
+
+          <h3>LIGHT</h3>
+
+          <span>
+            FORM / SHADOW
+          </span>
+
+          <span>↗</span>
+
+        </div>
+
+
+        <div
+          class="archive-item"
+          data-image="/assets/images/silence.jpg"
+        >
+
+          <span>003</span>
+
+          <h3>SILENCE</h3>
+
+          <span>
+            SPACE / STILLNESS
+          </span>
+
+          <span>↗</span>
+
+        </div>
+
+
+        <div
+          class="archive-item"
+          data-image="/assets/images/movement.jpg"
+        >
+
+          <span>004</span>
+
+          <h3>MOVEMENT</h3>
+
+          <span>
+            TIME / MOTION
+          </span>
+
+          <span>↗</span>
+
+        </div>
+
+      </div>
+
+
+      <!-- floating image following cursor -->
+
+      <div class="archive-preview">
+        <img
+          id="archivePreviewImage"
+          alt=""
+        >
+      </div>
+
+    </section>
+
+
+    <!-- ========================================
+         END
+         ======================================== -->
+
+    <section
+      id="ending"
+      class="chapter ending"
+    >
+
+      <div class="ending-content">
+
+        <p>
+          EVERY FRAME
+        </p>
+
+        <h2>
+          BEGINS
+          <br>
+          IN
+          <br>
+          DARKNESS.
+        </h2>
+
+
+        <div class="ending-footer">
+
+          <span>
+            THE MOMENT BEFORE®
+          </span>
+
+          <span>
+            AN INTERACTIVE PHOTOGRAPHIC EXPERIENCE
+          </span>
+
+          <span>
+            2026
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
 
 
   <script
@@ -358,4 +852,5 @@
   ></script>
 
 </body>
+
 </html>
