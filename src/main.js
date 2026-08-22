@@ -109,7 +109,9 @@ class FrameSequence {
     extension = "jpg",
     padding = 4,
     maxCachedFrames =
-      isSmallViewport ? 8 : 12
+      isSmallViewport ? 10 : 18,
+    maxConcurrentLoads =
+      isSmallViewport ? 3 : 5
   }) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
@@ -120,13 +122,18 @@ class FrameSequence {
     this.padding = padding;
     this.maxCachedFrames =
       maxCachedFrames;
+    this.maxConcurrentLoads =
+      maxConcurrentLoads;
 
     this.preloadRadius =
-      isSmallViewport ? 2 : 4;
+      isSmallViewport ? 4 : 8;
 
     this.currentFrame = 1;
     this.images = new Map();
     this.loading = new Set();
+    this.queued = new Set();
+    this.loadQueue = [];
+    this.activeLoads = 0;
 
     this.resize();
 
@@ -134,7 +141,17 @@ class FrameSequence {
       this.resize();
     });
 
-    this.loadFrame(1);
+    // Draw the opening frame first, then warm the first moments of
+    // the sequence before scroll-driven playback begins.
+    this.requestFrame(1, true);
+
+    for (
+      let frame = 2;
+      frame <= Math.min(12, this.frameCount);
+      frame++
+    ) {
+      this.requestFrame(frame);
+    }
   }
 
   getURL(frame) {
@@ -157,10 +174,10 @@ class FrameSequence {
       return;
     }
 
-    this.requestFrame(frame);
+    this.requestFrame(frame, true);
   }
 
-  requestFrame(frame) {
+  requestFrame(frame, highPriority = false) {
     if (
       this.images.has(frame) ||
       this.loading.has(frame)
@@ -168,14 +185,58 @@ class FrameSequence {
       return;
     }
 
-    this.loading.add(frame);
+    if (this.queued.has(frame)) {
+      if (highPriority) {
+        this.loadQueue = [
+          frame,
+          ...this.loadQueue.filter(
+            queuedFrame => queuedFrame !== frame
+          )
+        ];
+      }
+
+      return;
+    }
+
+    this.queued.add(frame);
+
+    if (highPriority) {
+      this.loadQueue.unshift(frame);
+    } else {
+      this.loadQueue.push(frame);
+    }
+
+    this.processLoadQueue();
+  }
+
+  processLoadQueue() {
+    while (
+      this.activeLoads < this.maxConcurrentLoads &&
+      this.loadQueue.length
+    ) {
+      const frame = this.loadQueue.shift();
+
+      this.queued.delete(frame);
+      this.loading.add(frame);
+      this.activeLoads++;
+
+      this.loadImage(frame);
+    }
+  }
+
+  loadImage(frame) {
 
     const image = new Image();
 
-    image.src = this.getURL(frame);
+    image.decoding = "async";
+    image.fetchPriority =
+      frame === this.currentFrame
+        ? "high"
+        : "auto";
 
     image.onload = () => {
       this.loading.delete(frame);
+      this.activeLoads--;
 
       this.images.set(
         frame,
@@ -187,11 +248,19 @@ class FrameSequence {
       if (frame === this.currentFrame) {
         this.draw(image);
       }
+
+      this.processLoadQueue();
     };
 
     image.onerror = () => {
       this.loading.delete(frame);
+      this.activeLoads--;
+      this.processLoadQueue();
     };
+
+    // Handlers and priority must be set before src so cached responses
+    // cannot complete before the load listener exists.
+    image.src = this.getURL(frame);
   }
 
   setFrame(frame) {
@@ -202,7 +271,22 @@ class FrameSequence {
       Math.min(frame, this.frameCount)
     );
 
+    const direction =
+      frame >= this.currentFrame ? 1 : -1;
+
     this.currentFrame = frame;
+
+    // Discard queued work that is no longer near the user's position.
+    // Already-running requests stay capped by maxConcurrentLoads.
+    const relevantDistance =
+      this.preloadRadius * 2;
+
+    this.loadQueue = this.loadQueue.filter(
+      queuedFrame =>
+        Math.abs(queuedFrame - frame) <= relevantDistance
+    );
+
+    this.queued = new Set(this.loadQueue);
 
     this.loadFrame(frame);
 
@@ -211,8 +295,8 @@ class FrameSequence {
       offset <= this.preloadRadius;
       offset++
     ) {
-      const next = frame + offset;
-      const previous = frame - offset;
+      const next = frame + offset * direction;
+      const previous = frame - offset * direction;
 
       if (next <= this.frameCount) {
         this.preload(next);
@@ -617,49 +701,99 @@ function updateCameraRig(progress) {
   }
 }
 
-loader.load(
-  "/assets/models/old_8mm_camera.glb",
+let cameraModelRequested = false;
 
-  (gltf) => {
-    cameraModel = gltf.scene;
+function loadCameraModel() {
+  if (cameraModelRequested) return;
 
-    normalizeModel(
-      cameraModel,
-      3.1
+  cameraModelRequested = true;
+
+  loader.load(
+    "/assets/models/old_8mm_camera.glb",
+
+    (gltf) => {
+      cameraModel = gltf.scene;
+
+      normalizeModel(
+        cameraModel,
+        3.1
+      );
+
+      cameraRig = new THREE.Group();
+      cameraRig.add(cameraModel);
+      scene.add(cameraRig);
+
+      cameraVignette =
+        createCameraVignette();
+      scene.add(cameraVignette);
+
+      cameraRig.rotation.set(
+        0.05,
+        -0.8,
+        0
+      );
+
+      cameraRig.position.set(
+        0,
+        0.2,
+        0
+      );
+
+      updateCameraRig(cameraMotionProgress);
+    },
+
+    undefined,
+
+    (error) => {
+      console.error(
+        "Camera model error:",
+        error
+      );
+    }
+  );
+}
+
+const cameraSection =
+  document.querySelector("#camera");
+
+if ("IntersectionObserver" in window) {
+  const cameraModelObserver =
+    new IntersectionObserver(
+      entries => {
+        if (!entries.some(entry => entry.isIntersecting)) {
+          return;
+        }
+
+        loadCameraModel();
+        cameraModelObserver.disconnect();
+      },
+      {
+        rootMargin: "150% 0px"
+      }
     );
 
-    cameraRig = new THREE.Group();
-    cameraRig.add(cameraModel);
-    scene.add(cameraRig);
+  cameraModelObserver.observe(cameraSection);
+} else {
+  loadCameraModel();
+}
 
-    cameraVignette =
-      createCameraVignette();
-    scene.add(cameraVignette);
+const scheduleCameraModelLoad = () => {
+  loadCameraModel();
+};
 
-    cameraRig.rotation.set(
-      0.05,
-      -0.8,
-      0
-    );
-
-    cameraRig.position.set(
-      0,
-      0.2,
-      0
-    );
-
-    updateCameraRig(cameraMotionProgress);
-  },
-
-  undefined,
-
-  (error) => {
-    console.error(
-      "Camera model error:",
-      error
-    );
-  }
-);
+if ("requestIdleCallback" in window) {
+  window.requestIdleCallback(
+    scheduleCameraModelLoad,
+    {
+      timeout: 4000
+    }
+  );
+} else {
+  window.setTimeout(
+    scheduleCameraModelLoad,
+    2500
+  );
+}
 
 let renderThreeScene = false;
 
