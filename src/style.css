@@ -1,3 +1,5 @@
+@import "lenis/dist/lenis.css";
+
 *,
 *::before,
 *::after {
@@ -185,8 +187,15 @@ h3 {
   display: block;
   z-index: 3;
 }
-#observationCanvas {
+#observationVideo {
   z-index: 1;
+}
+
+.before-frame-video {
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(1) contrast(1.18) brightness(0.52);
+  transform: scale(1.025);
 }
 
 #captureCanvas {
@@ -395,6 +404,17 @@ h3 {
   padding: var(--padding);
 }
 
+.cinematic-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1100px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+}
+
 .cinematic-heading {
   margin-top: 30px;
 
@@ -418,6 +438,30 @@ h3 {
   font-weight: 400;
 }
 
+.cinematic-context {
+  display: grid;
+  grid-template-columns: minmax(260px, 480px) auto;
+  align-items: end;
+  gap: clamp(32px, 8vw, 130px);
+  margin-top: clamp(40px, 7vh, 90px);
+  max-width: 1100px;
+}
+
+.cinematic-context > p:first-child {
+  color: rgba(255, 255, 255, 0.78);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(22px, 2.1vw, 32px);
+  line-height: 1.25;
+}
+
+.cinematic-method {
+  padding-bottom: 4px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
 .floating-word {
   position: absolute;
 
@@ -431,6 +475,22 @@ h3 {
   font-weight: 500;
 
   opacity: 0;
+}
+
+.floating-word > span {
+  display: block;
+}
+
+.floating-word > p {
+  max-width: 390px;
+  margin-top: 24px;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(21px, 1.9vw, 30px);
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.25;
 }
 
 .word-light {
@@ -452,11 +512,11 @@ h3 {
   top: 360vh;
   left: 12vw;
 
-  font-family:
+  /* font-family:
     "Cormorant Garamond",
     serif;
 
-  font-style: italic;
+  font-style: italic; */
 }
 
 .observe {
@@ -1354,6 +1414,24 @@ h3 {
 }
 
 @media (max-width: 768px) {
+
+  .cinematic-kicker > span,
+  .cinematic-method {
+    display: none;
+  }
+
+  .cinematic-context {
+    grid-template-columns: 1fr;
+    margin-top: 36px;
+  }
+
+  .floating-word {
+    max-width: calc(100vw - (var(--padding) * 2));
+  }
+
+  .floating-word > p {
+    margin-top: 16px;
+  }
 
   .hero-content {
     padding-top: 110px;

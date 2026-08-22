@@ -16,6 +16,9 @@
 
   <title>The Moment Before</title>
 
+  <!-- Load the application styles before the body can be painted. -->
+  <link rel="stylesheet" href="/src/style.css">
+
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,11 +37,22 @@
 
   <div class="cinematic-stage">
 
-    <!-- Observation frame sequence -->
-    <canvas
-      id="observationCanvas"
-      class="fixed-layer sequence-canvas"
-    ></canvas>
+    <!-- Full HD observation film -->
+    <video
+      id="observationVideo"
+      class="fixed-layer before-frame-video"
+      autoplay
+      muted
+      playsinline
+      preload="auto"
+      poster="/assets/frames/ezgif-frame-001.jpg"
+      aria-hidden="true"
+    >
+      <source
+        src="/assets/video/before-frame.mp4"
+        type="video/mp4"
+      >
+    </video>
 
     <!-- Capture frame sequence -->
     <canvas
@@ -200,9 +214,13 @@
 
       <div class="cinematic-copy">
 
-        <p class="micro-label">
-          BEFORE THE FRAME
-        </p>
+        <div class="cinematic-kicker">
+          <p class="micro-label">
+            BEFORE THE FRAME
+          </p>
+
+          <span>01 / A VISUAL STUDY</span>
+        </div>
 
         <h2 class="cinematic-heading">
           Before the photograph,
@@ -211,23 +229,48 @@
           <em>observation.</em>
         </h2>
 
+        <div class="cinematic-context">
+          <p>
+            The image begins long before the shutter moves. It begins
+            in the quiet act of noticing, reading the light, sensing
+            the distance, and allowing the ordinary to become precise.
+          </p>
+
+        </div>
+
       </div>
 
 
       <div class="floating-word word-light">
-        LIGHT
+        <span>LIGHT</span>
+        <p style="font-size: 34px;">
+          It arrives first, shaping edges, revealing texture,
+          and deciding what the eye will remember.
+        </p>
       </div>
 
       <div class="floating-word word-space">
-        SPACE
+        <span>SPACE</span>
+        <p style="font-size: 34px;">
+          A frame is a decision. What remains outside it matters
+          as much as what is allowed to stay.
+        </p>
       </div>
 
       <div class="floating-word word-movement">
-        MOVEMENT
+        <span>MOVEMENT</span>
+        <p style="font-size: 34px;">
+          Gesture becomes rhythm. The photographer learns to follow
+          without interrupting the moment.
+        </p>
       </div>
 
       <div class="floating-word word-waiting">
-        WAITING
+        <span>WAITING</span>
+        <p style="font-size: 34px;">
+          Patience makes the photograph possible. The shutter closes
+          only when instinct and attention agree.
+        </p>
       </div>
 
     </section>
@@ -279,11 +322,6 @@
 
           <div class="image-meta">
 
-            <span>FRAME 002</span>
-
-            <span>
-              LIGHT / FORM
-            </span>
 
           </div>
 

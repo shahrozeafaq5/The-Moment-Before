@@ -1,6 +1,3 @@
-import "./style.css";
-import "lenis/dist/lenis.css";
-
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import Lenis from "lenis";
@@ -10,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const observationCanvas = document.querySelector("#observationCanvas");
+const observationVideo = document.querySelector("#observationVideo");
 const captureCanvas = document.querySelector("#captureCanvas");
 const threeCanvas = document.querySelector("#threeCanvas");
 const chapterNumber = document.querySelector("#chapterNumber");
@@ -19,6 +16,56 @@ const prefersReducedMotion =
   window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
+
+const observationLoopStart = 0.04;
+const observationLoopEndPadding = 0.12;
+
+function restartObservationVideo() {
+  observationVideo.currentTime = observationLoopStart;
+
+  if (!prefersReducedMotion) {
+    observationVideo.play().catch(() => {});
+  }
+}
+
+function maintainObservationLoop() {
+  if (
+    Number.isFinite(observationVideo.duration) &&
+    observationVideo.currentTime >=
+      observationVideo.duration - observationLoopEndPadding
+  ) {
+    restartObservationVideo();
+  }
+
+  observationVideo.requestVideoFrameCallback(
+    maintainObservationLoop
+  );
+}
+
+if ("requestVideoFrameCallback" in observationVideo) {
+  observationVideo.requestVideoFrameCallback(
+    maintainObservationLoop
+  );
+} else {
+  observationVideo.addEventListener(
+    "timeupdate",
+    () => {
+      if (
+        Number.isFinite(observationVideo.duration) &&
+        observationVideo.currentTime >=
+          observationVideo.duration - observationLoopEndPadding
+      ) {
+        restartObservationVideo();
+      }
+    }
+  );
+}
+
+// Safety fallback if a browser reaches the end before the pre-end seek runs.
+observationVideo.addEventListener(
+  "ended",
+  restartObservationVideo
+);
 
 const isSmallViewport =
   window.matchMedia(
@@ -288,25 +335,6 @@ class FrameSequence {
       this.draw(current);
     }
   }
-}
-
-const observationSequence =
-  new FrameSequence({
-    canvas: observationCanvas,
-    frameCount: 66,
-    folder: "/assets/frames",
-    prefix: "ezgif-frame-",
-    extension: "jpg",
-    padding: 3
-  });
-
-for (
-  let frame = 2;
-  frame <=
-    observationSequence.preloadRadius + 1;
-  frame++
-) {
-  observationSequence.preload(frame);
 }
 
 const CAPTURE_FRAME_COUNT = 250;
@@ -715,16 +743,18 @@ gsap.timeline({
   }
 );
 
-const observationState = {
-  frame: 1
-};
-
 gsap.set(
-  observationCanvas,
+  observationVideo,
   {
     autoAlpha: 1
   }
 );
+
+if (prefersReducedMotion) {
+  observationVideo.pause();
+} else {
+  observationVideo.play().catch(() => {});
+}
 
 gsap.to(
   ".hero",
@@ -737,36 +767,6 @@ gsap.to(
       start: "top bottom",
       end: "top 30%",
       scrub: 1.3
-    }
-  }
-);
-
-gsap.to(
-  observationState,
-  {
-    frame:
-      observationSequence.frameCount,
-
-    ease: "none",
-
-    scrollTrigger: {
-      trigger:
-        "#before-frame",
-
-      start:
-        "top bottom",
-
-      end:
-        "bottom bottom",
-
-      scrub: 1
-    },
-
-    onUpdate() {
-      observationSequence
-        .setFrame(
-          observationState.frame
-        );
     }
   }
 );
@@ -817,7 +817,7 @@ wordsTl
   ".word-light",
   {
     autoAlpha: 0,
-    y: 60
+    y: 80
   },
   {
     autoAlpha: 1,
@@ -831,7 +831,7 @@ wordsTl
   ".word-light",
   {
     autoAlpha: 0,
-    y: -40,
+    y: -30,
     duration: 0.08
   },
   0.28
@@ -945,7 +945,7 @@ observeTransition
 )
 
 .to(
-  observationCanvas,
+  observationVideo,
   {
     autoAlpha: 0,
     ease: "none"
