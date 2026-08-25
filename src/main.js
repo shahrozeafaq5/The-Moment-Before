@@ -129,6 +129,7 @@ class FrameSequence {
       isSmallViewport ? 4 : 8;
 
     this.currentFrame = 1;
+    this.drawnFrame = null;
     this.images = new Map();
     this.loading = new Set();
     this.queued = new Set();
@@ -168,13 +169,43 @@ class FrameSequence {
 
     if (this.images.has(frame)) {
       this.draw(
-        this.images.get(frame)
+        this.images.get(frame),
+        frame
       );
 
       return;
     }
 
+    // Keep a useful image on screen while the exact frame is in flight.
+    // This is especially important after a fast wheel gesture or a mobile
+    // flick, where the requested frame can jump much farther than the preload
+    // radius in a single update.
+    const closestFrame = this.getClosestLoadedFrame(frame);
+
+    if (closestFrame !== null) {
+      this.draw(
+        this.images.get(closestFrame),
+        closestFrame
+      );
+    }
+
     this.requestFrame(frame, true);
+  }
+
+  getClosestLoadedFrame(targetFrame) {
+    let closestFrame = null;
+    let closestDistance = Infinity;
+
+    for (const loadedFrame of this.images.keys()) {
+      const distance = Math.abs(loadedFrame - targetFrame);
+
+      if (distance < closestDistance) {
+        closestFrame = loadedFrame;
+        closestDistance = distance;
+      }
+    }
+
+    return closestFrame;
   }
 
   requestFrame(frame, highPriority = false) {
@@ -245,8 +276,15 @@ class FrameSequence {
 
       this.trimCache();
 
-      if (frame === this.currentFrame) {
-        this.draw(image);
+      const drawnDistance = this.drawnFrame === null
+        ? Infinity
+        : Math.abs(this.drawnFrame - this.currentFrame);
+
+      if (
+        frame === this.currentFrame ||
+        Math.abs(frame - this.currentFrame) < drawnDistance
+      ) {
+        this.draw(image, frame);
       }
 
       this.processLoadQueue();
@@ -347,7 +385,7 @@ class FrameSequence {
     }
   }
 
-  draw(image) {
+  draw(image, frame = this.currentFrame) {
     if (!image) return;
 
     const canvasWidth = this.canvas.width;
@@ -390,6 +428,8 @@ class FrameSequence {
       drawWidth,
       drawHeight
     );
+
+    this.drawnFrame = frame;
   }
 
   resize() {
@@ -416,7 +456,14 @@ class FrameSequence {
       );
 
     if (current) {
-      this.draw(current);
+      this.draw(current, this.currentFrame);
+      return;
+    }
+
+    const closestFrame = this.getClosestLoadedFrame(this.currentFrame);
+
+    if (closestFrame !== null) {
+      this.draw(this.images.get(closestFrame), closestFrame);
     }
   }
 }
@@ -465,7 +512,7 @@ renderer.setSize(
 renderer.setPixelRatio(
   Math.min(
     window.devicePixelRatio,
-    2
+    isSmallViewport ? 1.5 : 2
   )
 );
 
@@ -702,11 +749,14 @@ function updateCameraRig(progress) {
 }
 
 let cameraModelRequested = false;
+let cameraModelLoadAttempts = 0;
+const CAMERA_MODEL_MAX_ATTEMPTS = 3;
 
 function loadCameraModel() {
-  if (cameraModelRequested) return;
+  if (cameraModelRequested || cameraModel) return;
 
   cameraModelRequested = true;
+  cameraModelLoadAttempts++;
 
   loader.load(
     "/assets/models/old_8mm_camera.glb",
@@ -745,13 +795,24 @@ function loadCameraModel() {
     undefined,
 
     (error) => {
+      cameraModelRequested = false;
+
       console.error(
         "Camera model error:",
         error
       );
+
+      if (cameraModelLoadAttempts < CAMERA_MODEL_MAX_ATTEMPTS) {
+        window.setTimeout(
+          loadCameraModel,
+          cameraModelLoadAttempts * 1200
+        );
+      }
     }
   );
 }
+
+window.addEventListener("online", loadCameraModel);
 
 const cameraSection =
   document.querySelector("#camera");
@@ -823,7 +884,7 @@ window.addEventListener(
     renderer.setPixelRatio(
       Math.min(
         window.devicePixelRatio,
-        2
+        isSmallViewport ? 1.5 : 2
       )
     );
   }
