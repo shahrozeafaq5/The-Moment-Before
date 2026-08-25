@@ -67,6 +67,31 @@ observationVideo.addEventListener(
   restartObservationVideo
 );
 
+const beforeFrameSection = document.querySelector("#before-frame");
+
+function startObservationVideo() {
+  observationVideo.preload = "auto";
+  restartObservationVideo();
+}
+
+if ("IntersectionObserver" in window) {
+  const observationVideoObserver = new IntersectionObserver(
+    entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+
+      startObservationVideo();
+      observationVideoObserver.disconnect();
+    },
+    {
+      rootMargin: "0px 0px -25% 0px"
+    }
+  );
+
+  observationVideoObserver.observe(beforeFrameSection);
+} else {
+  startObservationVideo();
+}
+
 const isSmallViewport =
   window.matchMedia(
     "(max-width: 768px)"
@@ -130,6 +155,7 @@ class FrameSequence {
 
     this.currentFrame = 1;
     this.drawnFrame = null;
+    this.started = false;
     this.images = new Map();
     this.loading = new Set();
     this.queued = new Set();
@@ -142,13 +168,24 @@ class FrameSequence {
       this.resize();
     });
 
-    // Draw the opening frame first, then warm the first moments of
-    // the sequence before scroll-driven playback begins.
+  }
+
+  start() {
+    if (this.started) return;
+
+    this.started = true;
+
+    // Draw the opening frame first, then warm only the nearby frames.
+    // The sequence is started by an observer instead of competing with
+    // the above-the-fold video and typography during the initial load.
     this.requestFrame(1, true);
 
     for (
       let frame = 2;
-      frame <= Math.min(12, this.frameCount);
+      frame <= Math.min(
+        isSmallViewport ? 5 : 8,
+        this.frameCount
+      );
       frame++
     ) {
       this.requestFrame(frame);
@@ -302,6 +339,8 @@ class FrameSequence {
   }
 
   setFrame(frame) {
+    this.start();
+
     frame = Math.round(frame);
 
     frame = Math.max(
@@ -478,6 +517,26 @@ const captureSequence = new FrameSequence({
   extension: "jpg",
   padding: 3
 });
+
+const captureSection = document.querySelector("#capture");
+
+if ("IntersectionObserver" in window) {
+  const captureSequenceObserver = new IntersectionObserver(
+    entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+
+      captureSequence.start();
+      captureSequenceObserver.disconnect();
+    },
+    {
+      rootMargin: "150% 0px"
+    }
+  );
+
+  captureSequenceObserver.observe(captureSection);
+} else {
+  captureSequence.start();
+}
 
 const scene =
   new THREE.Scene();
@@ -836,24 +895,6 @@ if ("IntersectionObserver" in window) {
   cameraModelObserver.observe(cameraSection);
 } else {
   loadCameraModel();
-}
-
-const scheduleCameraModelLoad = () => {
-  loadCameraModel();
-};
-
-if ("requestIdleCallback" in window) {
-  window.requestIdleCallback(
-    scheduleCameraModelLoad,
-    {
-      timeout: 4000
-    }
-  );
-} else {
-  window.setTimeout(
-    scheduleCameraModelLoad,
-    2500
-  );
 }
 
 let renderThreeScene = false;
