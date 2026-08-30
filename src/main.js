@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import Lenis from "lenis";
 
 import gsap from "gsap";
@@ -507,14 +508,16 @@ class FrameSequence {
   }
 }
 
-const CAPTURE_FRAME_COUNT = 250;
+// Every second source frame is enough for smooth scroll playback and halves
+// both the request count and transfer size (125 WebP frames, about 1.6 MB).
+const CAPTURE_FRAME_COUNT = 125;
 
 const captureSequence = new FrameSequence({
   canvas: captureCanvas,
   frameCount: CAPTURE_FRAME_COUNT,
-  folder: "/assets/frames2",
+  folder: "/assets/frames2-scroll",
   prefix: "ezgif-frame-",
-  extension: "jpg",
+  extension: "webp",
   padding: 3
 });
 
@@ -529,7 +532,7 @@ if ("IntersectionObserver" in window) {
       captureSequenceObserver.disconnect();
     },
     {
-      rootMargin: "150% 0px"
+      rootMargin: "250% 0px"
     }
   );
 
@@ -618,6 +621,8 @@ scene.add(rimLight);
 
 const loader =
   new GLTFLoader();
+
+loader.setMeshoptDecoder(MeshoptDecoder);
 
 let cameraModel = null;
 let cameraRig = null;
@@ -818,7 +823,7 @@ function loadCameraModel() {
   cameraModelLoadAttempts++;
 
   loader.load(
-    "/assets/models/old_8mm_camera.glb",
+    "/assets/models/old_8mm_camera.optimized.glb",
 
     (gltf) => {
       cameraModel = gltf.scene;
@@ -888,7 +893,7 @@ if ("IntersectionObserver" in window) {
         cameraModelObserver.disconnect();
       },
       {
-        rootMargin: "150% 0px"
+        rootMargin: "250% 0px"
       }
     );
 

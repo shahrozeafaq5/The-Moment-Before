@@ -19,6 +19,16 @@
   <!-- Load the application styles before the body can be painted. -->
   <link rel="stylesheet" href="/src/style.css">
 
+  <!-- Start this below-the-fold image early at low priority so it is decoded
+       before the Observe transition without competing with the hero film. -->
+  <link
+    rel="preload"
+    as="image"
+    href="/assets/images/observe.webp"
+    type="image/webp"
+    fetchpriority="low"
+  >
+
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -314,10 +324,13 @@
 
           <img
             class="observe-image"
-            src="/assets/images/observe.jpg"
+            src="/assets/images/observe.webp"
             alt="Black and white photography"
-            loading="lazy"
+            width="1440"
+            height="2160"
+            loading="eager"
             decoding="async"
+            fetchpriority="low"
           >
 
           <div class="image-meta">
